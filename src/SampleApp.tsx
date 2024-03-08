@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { networks, Psbt } from "bitcoinjs-lib";
+import { networks, payments, Psbt } from "bitcoinjs-lib";
 import {
   Network,
   OrdConnectKit,
@@ -426,6 +426,14 @@ function CreateRune() {
       ADDRESS_FORMAT_TO_TYPE[format.payments!] as Exclude<AddressType, "p2wsh">,
     )[0];
 
+    const payment = payments.p2sh({
+      redeem: payments.p2wpkh({
+        pubkey: Buffer.from(publicKey.payments!, "hex"),
+        network: networks.testnet,
+      }),
+      network: networks.testnet,
+    });
+
     const rpc = new JsonRpcDatasource({ network });
 
     const runeSat = 0; // for rune sat
@@ -443,9 +451,10 @@ function CreateRune() {
     const totalSats = spendables.reduce((a, b) => a + b.sats, 0);
     psbt.addInputs(
       spendables.map((v) => ({
-        type: "segwit",
+        type: "nested-segwit",
         hash: v.txid,
         index: v.n,
+        redeemScript: payment.redeem!.output!,
         witnessUtxo: {
           script: Buffer.from(v.scriptPubKey.hex, "hex"),
           value: v.sats,
@@ -476,9 +485,9 @@ function CreateRune() {
   };
 
   const handleDoCreateRuneTx = async () => {
-    if (format.payments !== "segwit") {
+    if (format.payments !== "p2sh-p2wpkh") {
       alert(
-        "rn only support for segwit payment, use leather wallet, todo handle using ordit-sdk lib",
+        "rn only support for nested-segwit/p2sh-p2wpkh payment, use xverse wallet, TODO: handle using ordit-sdk lib",
       );
     }
 
@@ -691,6 +700,14 @@ function MintRune() {
       ADDRESS_FORMAT_TO_TYPE[format.ordinals!] as Exclude<AddressType, "p2wsh">,
     )[0];
 
+    const payment = payments.p2sh({
+      redeem: payments.p2wpkh({
+        pubkey: Buffer.from(publicKey.payments!, "hex"),
+        network: networks.testnet,
+      }),
+      network: networks.testnet,
+    });
+
     const rpc = new JsonRpcDatasource({ network });
 
     const runeSat = 600; // for rune sat
@@ -708,9 +725,10 @@ function MintRune() {
     const totalSats = spendables.reduce((a, b) => a + b.sats, 0);
     psbt.addInputs(
       spendables.map((v) => ({
-        type: "segwit",
+        type: "nested-segwit",
         hash: v.txid,
         index: v.n,
+        redeemScript: payment.redeem!.output!,
         witnessUtxo: {
           script: Buffer.from(v.scriptPubKey.hex, "hex"),
           value: v.sats,
@@ -735,6 +753,8 @@ function MintRune() {
 
     const psbtBase64 = psbt.toBase64();
 
+    console.log({ psbtBase64 });
+
     const signed = await sign(paymentAddress, psbtBase64, {
       finalize: true,
       extractTx: true,
@@ -746,9 +766,9 @@ function MintRune() {
   };
 
   const handleDoMintTx = async () => {
-    if (format.payments !== "segwit") {
+    if (format.payments !== "p2sh-p2wpkh") {
       alert(
-        "rn only support for segwit payment, use leather wallet, todo handle using ordit-sdk lib",
+        "rn only support for nested-segwit/p2sh-p2wpkh payment, use xverse wallet, TODO: handle using ordit-sdk lib",
       );
     }
 

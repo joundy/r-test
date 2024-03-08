@@ -1,0 +1,61 @@
+{
+  "name": "rune-test",
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist/*",
+    "index.d.ts"
+  ],
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    },
+    "./dist/style.css": {
+      "import": "./dist/style.css"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:watch": "tsc && vite build --watch",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@ordzaar/standard-prettier": "^1.4.1",
+    "@ordzaar/standard-web-linter": "^1.4.1",
+    "@types/node": "^20.10.5",
+    "@types/react": "^18.2.58",
+    "@types/react-dom": "^18.2.19",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "@vitejs/plugin-react-swc": "^3.6.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.4",
+    "vite-plugin-css-injected-by-js": "^3.4.0",
+    "vite-plugin-dts": "^3.7.3",
+    "vite-plugin-eslint": "^1.8.1",
+    "vite-plugin-node-polyfills": "^0.21.0"
+  },
+  "dependencies": {
+    "@ordzaar/ord-connect": "^5.4.0",
+    "@ordzaar/ordit-sdk": "^1.4.1",
+    "axios": "^1.6.7",
+    "bitcoinjs-lib": "6.1.5"
+  },
+  "lint-staged": {
+    "*": [
+      "prettier --write --ignore-unknown"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
+    ]
+  }
+}
